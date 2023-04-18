@@ -144,10 +144,12 @@
 <main class="container">
 </head>
 <!DOCTYPE html>
-<h1>註冊</h1>
+
 <html>
 <head>
     <meta charset="UTF-8">
+    <br><br><br><br>
+    <h1>註冊</h1>
     <title>註冊頁面</title>
     <style>
         label {
@@ -199,7 +201,7 @@
         form.addEventListener('submit', function(event) {
             event.preventDefault();
             const data = new FormData(form);
-            fetch('http://127.0.0.1:5000/register', {
+            fetch('https://midweb.roi.backend.140-112-18-210.nip.io/register', {
                 method: 'POST',
                 body: data,
             })
