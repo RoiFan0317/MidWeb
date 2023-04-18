@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <title>與 ChatGPT 聊天機器人互動</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .chat-container {
+            width: 400px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .chat-window {
+            height: 300px;
+            overflow-y: scroll;
+            padding: 15px;
+            background-color: #f5f5f5;
+        }
+
+        .messages div {
+            margin-bottom: 10px;
+        }
+
+        form {
+            display: flex;
+            background-color: #fff;
+        }
+
+        input {
+            flex: 1;
+            border: none;
+            padding: 10px;
+            outline: none;
+        }
+
+        button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-window">
+            <div class="messages"></div>
+        </div>
+        <form id="message-form">
+            <input type="text" id="message-input" placeholder="輸入您的訊息">
+          </form>
+        </div>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script>
+            $(document).ready(function () {
+                const $messageForm = $('#message-form');
+                const $messageInput = $('#message-input');
+                const $messages = $('.messages');
+    
+                function appendMessage(text, className) {
+                    const $message = $('<div>').addClass(className).text(text);
+                    $messages.append($message);
+                    $('.chat-window').scrollTop($messages.height());
+                }
+    
+                $messageForm.on('submit', function (event) {
+                    event.preventDefault();
+    
+                    const message = $messageInput.val().trim();
+                    if (!message) return;
+    
+                    appendMessage(message, 'user-message');
+                    $messageInput.val('');
+    
+                    // 請替換成您的後端 API 端點
+                    const apiUrl = 'http://127.0.0.1:5000/chat';
+                    $.ajax({
+                        type: 'POST',
+                        url: apiUrl,
+                        contentType: 'application/json',
+                        data: JSON.stringify({ message: message }),
+                        success: function (response) {
+                            appendMessage(response.message, 'ai-message');
+                        },
+                        error: function (error) {
+                            console.error('Error:', error);
+                        },
+                    });
+                });
+            });
+        </script>
+    </body>
+    </html>
+    

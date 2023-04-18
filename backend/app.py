@@ -1,8 +1,12 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
+import os
+import openai
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.secret_key = 'secret-key'
@@ -130,12 +134,19 @@ def delete_message(id):
 #留言板 End
 
 # OpenAI
-import openai 
-openai.api_key = "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"
+
+
+# 請將以下 YOUR_API_KEY 替換為您的 OpenAI API 密鑰
+openai.api_key = "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"
+
+@app.route('/')
+def index():
+    return render_template('index.html')
 
 @app.route('/chat', methods=['POST'])
 def chat():
     user_message = request.json.get('message')
+    print("user_message")
     if not user_message:
         return jsonify(error="請輸入訊息")
 
@@ -147,10 +158,12 @@ def chat():
         stop=None,
         temperature=0.5,
     )
-
     ai_message = response.choices[0].text.strip()
+    
     return jsonify(message=ai_message)
 
+if __name__ == '__main__':
+    app.run()
 # OpenAI 
 
 # Create the Tables 把上面的全部都定義完再 Create

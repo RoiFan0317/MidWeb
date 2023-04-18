@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>留言板</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>留言板</h1>
+    <div id="message-list-container"></div>
+    <form id="message-form">
+        <textarea id="message-input" name="message" placeholder="輸入留言" required></textarea>
+        <button type="submit">發送</button>
+    </form>
+    <script>
+        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        const messageListContainer = document.getElementById('message-list-container');
+        const messageForm = document.getElementById('message-form');
+
+        // 提交留言
+        function submitMessage(message) {
+            fetch('http://127.0.0.1:5000/messages', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    content: message,
+                    user_id: currentUser.id
+                })
+            })
+            .then(response => {
+                if (response.ok) {
+                    fetchMessages();
+                }
+            })
+            .catch(error => console.log(error));
+        }
+
+        // 刪除留言
+        function deleteMessage(id) {
+            fetch(`http://127.0.0.1:5000/messages/${id}`, {
+                method: 'DELETE',
+            })
+            .then(response => {
+                if (response.ok) {
+                    fetchMessages();
+                }
+            })
+            .catch(error => console.log(error));
+        }
+
+        // 獲取留言列表
+        function fetchMessages() {
+            fetch('http://127.0.0.1:5000/messages')
+            .then(response => response.json())
+            .then(messages => {
+                messageListContainer.innerHTML = '';
+                messages.forEach(message => {
+                    const messageItem = document.createElement('div');
+                    messageItem.classList.add('message-item');
+                    messageItem.innerHTML = `
+                        <span>${message.user.username}：</span>
+                        <span>${message.content}</span>
+                    `;
+                    if (currentUser.id === message.user_id) {
+                        const deleteButton = document.createElement('button');
+                        deleteButton.textContent = '刪除';
+                        deleteButton.classList.add('delete-button');
+                        deleteButton.addEventListener('click', function() {
+                            deleteMessage(message.id);
+                        });
+                        messageItem.appendChild(deleteButton);
+                    }
+                    messageListContainer.appendChild(messageItem);
+                });
+            })
+            .catch(error => console.log(error));
+        }
+
+        // 監聽表單提交事件
+        messageForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            const messageInput = document.getElementById('message-input');
+            submitMessage(messageInput.value);
+            messageInput.value = '';
+        });
+
+        fetchMessages();
+    </script>
+</body>
+</html>
