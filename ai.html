@@ -224,9 +224,9 @@
     
                     appendMessage(message, 'user-message');
                     $messageInput.val('');
-    
-                    // 請替換成您的後端 API 端點
-                    const apiUrl = 'http://127.0.0.1:5000/chat';
+
+                    // 請替換後端 API 
+                    const apiUrl = 'http://midweb.d11921c02-backend.140-112-18-210.nip.io:5000/chat';
                     $.ajax({
                         type: 'POST',
                         url: apiUrl,
@@ -244,4 +244,6 @@
         </script>
     </body>
     </html>
+    <p>這是連結到Chat-GPT聊天，如果用太多不給用或是反應慢是正常的QQ。</p>
+
   </main>
